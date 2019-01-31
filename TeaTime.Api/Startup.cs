@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TeaTime.Infrastructure.Data;
 
 namespace TeaTime.Api
 {
@@ -21,6 +23,21 @@ namespace TeaTime.Api
         }
 
         public IConfiguration Configuration { get; }
+
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            ConfigureSqliteServices(services);
+        }
+
+        private void ConfigureSqliteServices(IServiceCollection services)
+        {
+            services.AddDbContext<TeaTimeContext>(options =>
+            {
+                options.UseSqlite("Data Source=TeaTime.db");
+            });
+
+            ConfigureServices(services);
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
